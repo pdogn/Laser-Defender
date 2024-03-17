@@ -9,9 +9,33 @@ public class EnemySpawn : MonoBehaviour
     WaveConfigSO currentWave;
 
     [SerializeField] bool isLooping;
+    /// <summary>
+    /// 
+    /// </summary>
+    [SerializeField] GameObject bossPref;
+    [SerializeField] bool isSpawn = true;
+    [SerializeField] int n_score = 500;
+    Scorekeeper scorekeeper;
+
+    private void Awake()
+    {
+        scorekeeper = FindObjectOfType<Scorekeeper>();
+    }
+
     void Start()
     {
         StartCoroutine(SpawnEnemyWave());
+    }
+
+    private void Update()
+    {
+        if (scorekeeper.GetScore() >= n_score && isSpawn)
+        {
+            isLooping = false;
+            //spawn boss
+            SpawnBoss();
+            isSpawn = false;
+        }
     }
 
     public WaveConfigSO GetCurrentWave()
@@ -38,5 +62,11 @@ public class EnemySpawn : MonoBehaviour
             }
         }
         while (isLooping);
+    }
+
+    void SpawnBoss()
+    {
+        Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y + 12);
+        GameObject bossClone = Instantiate(bossPref, spawnPos, Quaternion.identity, transform);
     }
 }

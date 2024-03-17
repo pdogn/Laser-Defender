@@ -8,13 +8,55 @@ public class AudioPlayer : MonoBehaviour
     [SerializeField] AudioClip shootingClip;
     [SerializeField][Range(0f, 1f)] float shootingVolume = 1f;
 
-    public void PlayShootingClip()
+    [Header("Damage")]
+    [SerializeField] AudioClip damageClip;
+    [SerializeField][Range(0f, 1f)] float damageVolume = 1f;
+
+    [Header("Health")]
+    [SerializeField] AudioClip healthClip;
+    [SerializeField][Range(0f, 1f)] float healthVolume = 1f;
+
+    static AudioPlayer instance;
+
+    private void Awake()
     {
-        if(shootingClip != null)
+        ManageSingleton();
+    }
+
+    void ManageSingleton()
+    {
+        if(instance != null)
         {
-            AudioSource.PlayClipAtPoint(shootingClip, 
-                                        Camera.main.transform.position, 
-                                        shootingVolume);
+            gameObject.SetActive(false);
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
         }
     }
+    public void PlayShootingClip()
+    {
+        PlayClip(shootingClip, shootingVolume);
+    }
+
+    public void PlayDamageClip()
+    {
+        PlayClip(damageClip, damageVolume);
+    }
+
+    public void PlayHealthClip()
+    {
+        PlayClip(healthClip, healthVolume);
+    }
+    void PlayClip(AudioClip clip, float volume)
+    {
+        if(clip != null)
+        {
+            Vector3 cameraPos = Camera.main.transform.position;
+            AudioSource.PlayClipAtPoint(clip, cameraPos, volume);
+        }
+    }
+
 }
